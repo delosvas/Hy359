@@ -159,5 +159,8 @@ public class Incident {
     public void setFiremen(int firemen) {
         this.firemen = firemen;
     }
-  
+
+    public void setStart_datetime(String start_datetime) {
+        this.start_datetime = start_datetime;
+    }
 }

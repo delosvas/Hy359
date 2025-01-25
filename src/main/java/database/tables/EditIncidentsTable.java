@@ -9,9 +9,11 @@ import mainClasses.Incident;
 import com.google.gson.Gson;
 import database.DB_Connection;
 
+import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -205,4 +207,56 @@ public class EditIncidentsTable {
             Logger.getLogger(EditIncidentsTable.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+
+    public List<Incident> getActiveIncidents() throws SQLException, ClassNotFoundException {
+        List<Incident> incidents = new ArrayList<>();
+
+        // Σύνδεση με τη βάση δεδομένων
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/your_database_name", "username", "password");
+
+        String query = "SELECT * FROM incidents WHERE status != 'Resolved'";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+
+        while (rs.next()) {
+            Incident incident = new Incident();
+            incident.setIncident_id(rs.getInt("incident_id"));
+            incident.setIncident_type(rs.getString("incident_type"));
+            incident.setDescription(rs.getString("description"));
+            incident.setUser_phone(rs.getString("user_phone"));
+            incident.setUser_type(rs.getString("user_type"));
+            incident.setAddress(rs.getString("address"));
+            incident.setPrefecture(rs.getString("prefecture"));
+            incident.setMunicipality(rs.getString("municipality"));
+            // Χρήση Reflection ή άλλη μέθοδος για να ορίσετε το start_datetime
+            try {
+                Field startDatetimeField = Incident.class.getDeclaredField("start_datetime");
+                startDatetimeField.setAccessible(true);
+                startDatetimeField.set(incident, rs.getString("start_datetime"));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            incident.setEnd_datetime(rs.getString("end_datetime"));
+            incident.setDanger(rs.getString("danger"));
+            incident.setStatus(rs.getString("status"));
+            incident.setFinalResult(rs.getString("finalResult"));
+            incident.setLat(rs.getDouble("lat"));
+            incident.setLon(rs.getDouble("lon"));
+            incident.setVehicles(rs.getInt("vehicles"));
+            incident.setFiremen(rs.getInt("firemen"));
+
+            incidents.add(incident);
+        }
+
+        rs.close();
+        stmt.close();
+        conn.close();
+
+        return incidents;
+    }
+
+
+
 }
