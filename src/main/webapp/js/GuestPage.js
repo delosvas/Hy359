@@ -17,6 +17,8 @@ function post_register_user() {
     formData.forEach(function(value, key) {
         data[key] = value.trim();
     });
+    data["user_type"] = "guest";
+
 
     // Δημιουργία JSON δεδομένων
     const jsonData = JSON.stringify(data);
@@ -53,6 +55,7 @@ function post_register_user() {
 
     xhr.send(jsonData);
 }
+
 
 /**
  * Λειτουργία για τη φόρτωση των ενεργών περιστατικών από τον server
