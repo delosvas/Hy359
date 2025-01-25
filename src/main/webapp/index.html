@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Επαλήθευση στοιχειων Χρήστη Εθνικής Τράπεζας</title>
+    <style>
+        header {
+            text-align: center;
+            background-color: #0044cc;
+            color: white;
+            padding: 20px 0;
+            font-size: 24px;
+            letter-spacing: 1.5px;
+            border-bottom: 5px solid #003399;
+            border-right: 5px solid #003399;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #003399;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .toggle-password {
+            background-color: #ccc;
+            color: black;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+
+<body>
+<header>Επαλήθευση στοιχειων Χρήστη Εθνικής Τράπεζας</header>
+<form id="registrationForm" >
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required pattern="^[A-Za-z][A-Za-z0-9]{7,}$" minlength="8" title="Το όνομα χρήστη πρέπει να είναι τουλάχιστον 8 χαρακτήρες και να μην ξεκινά με αριθμό ή σύμβολο.">
+    <br><br>
+
+    <label for="email">Email*:</label>
+    <input type="email" id="email" name="email" required>
+    <br><br>
+
+    <label for="password">Password*:</label>
+    <input type="password" id="password" name="password" required pattern="(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=]).{8,18}" title="Ο κωδικός πρέπει να έχει τουλάχιστον ένα κεφαλαίο γράμμα, έναν αριθμό και ένα σύμβολο, και να είναι 8-18 χαρακτήρες.">
+    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">Εμφάνιση Κωδικού</button>
+    <div id="passwordError" class="error-message" style="display:none;">Ο κωδικός πρέπει να έχει τουλάχιστον ένα κεφαλαίο γράμμα, έναν αριθμό και ένα σύμβολο, και να είναι 8-18 χαρακτήρες.</div>
+    <div id="invalidSequenceError" class="error-message" style="display:none;">Ο κωδικός περιέχει απαγορευμένες λέξεις (fire, fotia, ethelontis, volunteer).</div>
+    <div id="weakPasswordMessage" class="error-message" style="display:none;">Αυτός ο κωδικός είναι πολύ αδύναμος (πρεπει να μην ειναι πανω από 50% των συμβολων του αριθμοι και να μην ειναι το 50% των συμβολων του ιδιος χαρακτηρας ).</div>
+    <div id="strongPasswordMessage" class="error-message" style="display:none;">Strong password: Τουλάχιστον 1 μικρό, 1 μεγάλο, 1 αριθμό και 1 σύμβολο.</div>
+    <div id="mediumPasswordMessage" class="error-message" style="display:none;">Medium password: Ο κωδικός δεν είναι ούτε weak ούτε strong.</div>
+    <br><br>
+
+    <label for="confirm_password">Confirm Password*:</label>
+    <input type="password" id="confirm_password" required>
+    <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirm_password')">Εμφάνιση Κωδικού</button>
+    <div id="confirmPasswordError" class="error-message" style="display:none;">Οι κωδικοί δεν ταιριάζουν!</div>
+
+    <br><br>
+
+    <label for="firstname">First Name*:</label>
+    <input type="text" id="firstname" name="firstname" required pattern="^[A-Za-z]{3,30}$" title="Το όνομα πρέπει να έχει 3-30 χαρακτήρες χωρίς αριθμούς.">
+    <br><br>
+
+    <label for="lastname">Last Name*:</label>
+    <input type="text" id="lastname" name="lastname" required pattern="^[A-Za-z]{3,30}$" title="Το επώνυμο πρέπει να έχει 3-30 χαρακτήρες χωρίς αριθμούς.">
+    <br><br>
+
+    <label for="birthdate">Birthdate*:</label>
+    <input type="date" id="birthdate" name="birthdate" required min="1920-01-01" max="2011-12-31" value="1980-01-01">
+
+    <br><br>
+
+    <label>Sex*:</label>
+    <input type="radio" id="male" name="gender" value="male" required>Άντρας
+    <input type="radio" id="female" name="gender" value="female">Γυναίκα
+    <input type="radio" id="other" name="gender" value="other">Άλλο
+    <br><br>
+
+    <label for="afm">ΑΦΜ*:</label>
+    <input type="text" id="afm" name="afm" required pattern="\d{10}" title="Το ΑΦΜ πρέπει να αποτελείται από 10 αριθμούς.">
+    <br><br>
+
+    <label for="type">User Type*:</label>
+    <select id="type" onchange = "toggleVolunteerFields()" required>
+        <option value="simple">Απλός Χρήστης</option>
+        <option value="volunteer">Εθελοντής Πυροσβέστης</option>
+    </select>
+    <br><br>
+
+    <div id="volunteerFields" style="display: none;">
+        <label for="volunteer_type">Κατηγορία Εθελοντή Πυροσβέστη*:</label>
+        <select id="volunteer_type" >
+            <option value="simple">Μάχιμοι Εθελοντές πυροσβέστες</option>
+            <option value="driver">Οδηγοί-Χειριστές Πυροσβεστικών οχημάτων</option>
+        </select>
+
+        <label for="height">Ύψος (σε μέτρα)*:</label>
+        <input type="number" id="height"  min="1.45" max="2.20" step="0.01" title="Το ύψος πρέπει να είναι από 1.45 έως 2.20 μέτρα.">
+
+        <label for="weight">Βάρος (σε kg)*:</label>
+        <input type="number" id="weight"  min="40" max="160" title="Το βάρος πρέπει να είναι από 40 έως 160 κιλά.">
+    </div>
+
+
+    <label for="country">Country*:</label>
+    <select class="form-select"  id="country" name="country">
+        <option value="">Country</option>
+        <option value="AF">Afghanistan</option>
+        <option value="AX">Åland Islands</option>
+        <option value="AL">Albania</option>
+        <option value="DZ">Algeria</option>
+        <option value="AS">American Samoa</option>
+        <option value="AD">Andorra</option>
+        <option value="AO">Angola</option>
+        <option value="AI">Anguilla</option>
+        <option value="AQ">Antarctica</option>
+        <option value="AG">Antigua and Barbuda</option>
+        <option value="AR">Argentina</option>
+        <option value="AM">Armenia</option>
+        <option value="AW">Aruba</option>
+        <option value="AU">Australia</option>
+        <option value="AT">Austria</option>
+        <option value="AZ">Azerbaijan</option>
+        <option value="BS">Bahamas</option>
+        <option value="BH">Bahrain</option>
+        <option value="BD">Bangladesh</option>
+        <option value="BB">Barbados</option>
+        <option value="BY">Belarus</option>
+        <option value="BE">Belgium</option>
+        <option value="BZ">Belize</option>
+        <option value="BJ">Benin</option>
+        <option value="BM">Bermuda</option>
+        <option value="BT">Bhutan</option>
+        <option value="BO">Bolivia (Plurinational State of)</option>
+        <option value="BA">Bosnia and Herzegovina</option>
+        <option value="BW">Botswana</option>
+        <option value="BV">Bouvet Island</option>
+        <option value="BR">Brazil</option>
+        <option value="IO">British Indian Ocean Territory</option>
+        <option value="BN">Brunei Darussalam</option>
+        <option value="BG">Bulgaria</option>
+        <option value="BF">Burkina Faso</option>
+        <option value="BI">Burundi</option>
+        <option value="CV">Cabo Verde</option>
+        <option value="KH">Cambodia</option>
+        <option value="CM">Cameroon</option>
+        <option value="CA">Canada</option>
+        <option value="BQ">Caribbean Netherlands</option>
+        <option value="KY">Cayman Islands</option>
+        <option value="CF">Central African Republic</option>
+        <option value="TD">Chad</option>
+        <option value="CL">Chile</option>
+        <option value="CN">China</option>
+        <option value="CX">Christmas Island</option>
+        <option value="CC">Cocos (Keeling) Islands</option>
+        <option value="CO">Colombia</option>
+        <option value="KM">Comoros</option>
+        <option value="CG">Congo</option>
+        <option value="CD">Congo, Democratic Republic of the</option>
+        <option value="CK">Cook Islands</option>
+        <option value="CR">Costa Rica</option>
+        <option value="HR">Croatia</option>
+        <option value="CU">Cuba</option>
+        <option value="CW">Curaçao</option>
+        <option value="CY">Cyprus</option>
+        <option value="CZ">Czech Republic</option>
+        <option value="CI">Côte d'Ivoire</option>
+        <option value="DK">Denmark</option>
+        <option value="DJ">Djibouti</option>
+        <option value="DM">Dominica</option>
+        <option value="DO">Dominican Republic</option>
+        <option value="EC">Ecuador</option>
+        <option value="EG">Egypt</option>
+        <option value="SV">El Salvador</option>
+        <option value="GQ">Equatorial Guinea</option>
+        <option value="ER">Eritrea</option>
+        <option value="EE">Estonia</option>
+        <option value="SZ">Eswatini (Swaziland)</option>
+        <option value="ET">Ethiopia</option>
+        <option value="FK">Falkland Islands (Malvinas)</option>
+        <option value="FO">Faroe Islands</option>
+        <option value="FJ">Fiji</option>
+        <option value="FI">Finland</option>
+        <option value="FR">France</option>
+        <option value="GF">French Guiana</option>
+        <option value="PF">French Polynesia</option>
+        <option value="TF">French Southern Territories</option>
+        <option value="GA">Gabon</option>
+        <option value="GM">Gambia</option>
+        <option value="GE">Georgia</option>
+        <option value="DE">Germany</option>
+        <option value="GH">Ghana</option>
+        <option value="GI">Gibraltar</option>
+        <option value="GR">Greece</option>
+        <option value="GL">Greenland</option>
+        <option value="GD">Grenada</option>
+        <option value="GP">Guadeloupe</option>
+        <option value="GU">Guam</option>
+        <option value="GT">Guatemala</option>
+        <option value="GG">Guernsey</option>
+        <option value="GN">Guinea</option>
+        <option value="GW">Guinea-Bissau</option>
+        <option value="GY">Guyana</option>
+        <option value="HT">Haiti</option>
+        <option value="HM">Heard Island and Mcdonald Islands</option>
+        <option value="HN">Honduras</option>
+        <option value="HK">Hong Kong</option>
+        <option value="HU">Hungary</option>
+        <option value="IS">Iceland</option>
+        <option value="IN">India</option>
+        <option value="ID">Indonesia</option>
+        <option value="IR">Iran</option>
+        <option value="IQ">Iraq</option>
+        <option value="IE">Ireland</option>
+        <option value="IM">Isle of Man</option>
+        <option value="IL">Israel</option>
+        <option value="IT">Italy</option>
+        <option value="JM">Jamaica</option>
+        <option value="JP">Japan</option>
+        <option value="JE">Jersey</option>
+        <option value="JO">Jordan</option>
+        <option value="KZ">Kazakhstan</option>
+        <option value="KE">Kenya</option>
+        <option value="KI">Kiribati</option>
+        <option value="KP">Korea, North</option>
+        <option value="KR">Korea, South</option>
+        <option value="XK">Kosovo</option>
+        <option value="KW">Kuwait</option>
+        <option value="KG">Kyrgyzstan</option>
+        <option value="LA">Lao People's Democratic Republic</option>
+        <option value="LV">Latvia</option>
+        <option value="LB">Lebanon</option>
+        <option value="LS">Lesotho</option>
+        <option value="LR">Liberia</option>
+        <option value="LY">Libya</option>
+        <option value="LI">Liechtenstein</option>
+        <option value="LT">Lithuania</option>
+        <option value="LU">Luxembourg</option>
+        <option value="MO">Macao</option>
+        <option value="MK">Macedonia North</option>
+        <option value="MG">Madagascar</option>
+        <option value="MW">Malawi</option>
+        <option value="MY">Malaysia</option>
+        <option value="MV">Maldives</option>
+        <option value="ML">Mali</option>
+        <option value="MT">Malta</option>
+        <option value="MH">Marshall Islands</option>
+        <option value="MQ">Martinique</option>
+        <option value="MR">Mauritania</option>
+        <option value="MU">Mauritius</option>
+        <option value="YT">Mayotte</option>
+        <option value="MX">Mexico</option>
+        <option value="FM">Micronesia</option>
+        <option value="MD">Moldova</option>
+        <option value="MC">Monaco</option>
+        <option value="MN">Mongolia</option>
+        <option value="ME">Montenegro</option>
+        <option value="MS">Montserrat</option>
+        <option value="MA">Morocco</option>
+        <option value="MZ">Mozambique</option>
+        <option value="MM">Myanmar (Burma)</option>
+        <option value="NA">Namibia</option>
+        <option value="NR">Nauru</option>
+        <option value="NP">Nepal</option>
+        <option value="NL">Netherlands</option>
+        <option value="AN">Netherlands Antilles</option>
+        <option value="NC">New Caledonia</option>
+        <option value="NZ">New Zealand</option>
+        <option value="NI">Nicaragua</option>
+        <option value="NE">Niger</option>
+        <option value="NG">Nigeria</option>
+        <option value="NU">Niue</option>
+        <option value="NF">Norfolk Island</option>
+        <option value="MP">Northern Mariana Islands</option>
+        <option value="NO">Norway</option>
+        <option value="OM">Oman</option>
+        <option value="PK">Pakistan</option>
+        <option value="PW">Palau</option>
+        <option value="PS">Palestine</option>
+        <option value="PA">Panama</option>
+        <option value="PG">Papua New Guinea</option>
+        <option value="PY">Paraguay</option>
+        <option value="PE">Peru</option>
+        <option value="PH">Philippines</option>
+        <option value="PN">Pitcairn Islands</option>
+        <option value="PL">Poland</option>
+        <option value="PT">Portugal</option>
+        <option value="PR">Puerto Rico</option>
+        <option value="QA">Qatar</option>
+        <option value="RE">Reunion</option>
+        <option value="RO">Romania</option>
+        <option value="RU">Russian Federation</option>
+        <option value="RW">Rwanda</option>
+        <option value="BL">Saint Barthelemy</option>
+        <option value="SH">Saint Helena</option>
+        <option value="KN">Saint Kitts and Nevis</option>
+        <option value="LC">Saint Lucia</option>
+        <option value="MF">Saint Martin</option>
+        <option value="PM">Saint Pierre and Miquelon</option>
+        <option value="VC">Saint Vincent and the Grenadines</option>
+        <option value="WS">Samoa</option>
+        <option value="SM">San Marino</option>
+        <option value="ST">Sao Tome and Principe</option>
+        <option value="SA">Saudi Arabia</option>
+        <option value="SN">Senegal</option>
+        <option value="RS">Serbia</option>
+        <option value="CS">Serbia and Montenegro</option>
+        <option value="SC">Seychelles</option>
+        <option value="SL">Sierra Leone</option>
+        <option value="SG">Singapore</option>
+        <option value="SX">Sint Maarten</option>
+        <option value="SK">Slovakia</option>
+        <option value="SI">Slovenia</option>
+        <option value="SB">Solomon Islands</option>
+        <option value="SO">Somalia</option>
+        <option value="ZA">South Africa</option>
+        <option value="GS">South Georgia and the South Sandwich Islands</option>
+        <option value="SS">South Sudan</option>
+        <option value="ES">Spain</option>
+        <option value="LK">Sri Lanka</option>
+        <option value="SD">Sudan</option>
+        <option value="SR">Suriname</option>
+        <option value="SJ">Svalbard and Jan Mayen</option>
+        <option value="SE">Sweden</option>
+        <option value="CH">Switzerland</option>
+        <option value="SY">Syria</option>
+        <option value="TW">Taiwan</option>
+        <option value="TJ">Tajikistan</option>
+        <option value="TZ">Tanzania</option>
+        <option value="TH">Thailand</option>
+        <option value="TL">Timor-Leste</option>
+        <option value="TG">Togo</option>
+        <option value="TK">Tokelau</option>
+        <option value="TO">Tonga</option>
+        <option value="TT">Trinidad and Tobago</option>
+        <option value="TN">Tunisia</option>
+        <option value="TR">Turkey (Türkiye)</option>
+        <option value="TM">Turkmenistan</option>
+        <option value="TC">Turks and Caicos Islands</option>
+        <option value="TV">Tuvalu</option>
+        <option value="UM">U.S. Outlying Islands</option>
+        <option value="UG">Uganda</option>
+        <option value="UA">Ukraine</option>
+        <option value="AE">United Arab Emirates</option>
+        <option value="GB">United Kingdom</option>
+        <option value="US">United States</option>
+        <option value="UY">Uruguay</option>
+        <option value="UZ">Uzbekistan</option>
+        <option value="VU">Vanuatu</option>
+        <option value="VA">Vatican City Holy See</option>
+        <option value="VE">Venezuela</option>
+        <option value="VN">Vietnam</option>
+        <option value="VG">Virgin Islands, British</option>
+        <option value="VI">Virgin Islands, U.S</option>
+        <option value="WF">Wallis and Futuna</option>
+        <option value="EH">Western Sahara</option>
+        <option value="YE">Yemen</option>
+        <option value="ZM">Zambia</option>
+        <option value="ZW">Zimbabwe</option>
+    </select>
+    <br><br>
+
+    <label for="prefecture">Νομός*:</label>
+    <select id="prefecture" name="prefecture" required>
+        <option value="Heraklion">Ηράκλειο</option>
+        <option value="Chania">Χανιά</option>
+        <option value="Rethymno">Ρέθυμνο</option>
+        <option value="Lassithi">Λασίθι</option>
+    </select>
+    <br><br>
+
+    <label for="municipality">Δήμος Διαμονής*:</label>
+    <input type="text" id="municipality" name="municipality" required minlength="3" maxlength="30">
+    <br><br>
+
+    <label for="address">Διεύθυνση Οικίας*:</label>
+    <input type="text" id="address" name="address" required minlength="10" maxlength="150">
+    <br><br>
+    <label for="telephone">Τηλεφωνο*:</label>
+    <input type="text" id="telephone" name="telephone" required minlength="10" maxlength="10">
+    <br><br>
+
+    <label for="job">Job*:</label>
+    <input type="text" id="job" name="job" required>
+    <br><br>
+
+    <label for="terms">Συμφωνώ με τους όρους χρήσης*:</label>
+    <input type="checkbox" id="terms"  required>
+    <span id="termsText">Αποδέχομαι τους όρους χρήσης.</span>
+    <br><br>
+
+    <button type="button" onclick="register()">Εγγραφή</button>
+
+    <a href="login_user.html" class="redirect">Sign in </a>
+    <br><br><br><br>
+    <a href="incident_register.html" class="redirect">Register New Incident</a>
+    <div id ="check">
+
+    </div>
+    <!--<button type="button" onclick="register()">Εγγραφή</button>-->
+
+</form>
+
+<script>
+    document.getElementById("password").addEventListener("input", function() {
+        var password = document.getElementById("password").value.trim();
+        var passwordLength = password.length;
+
+
+        document.getElementById("weakPasswordMessage").style.display = "none";
+        document.getElementById("strongPasswordMessage").style.display = "none";
+        document.getElementById("mediumPasswordMessage").style.display = "none";
+
+
+        var forbiddenSequences = ["fire", "fotia", "ethelontis", "volunteer"];
+        for (var i = 0; i < forbiddenSequences.length; i++) {
+            if (password.includes(forbiddenSequences[i])) {
+                document.getElementById("invalidSequenceError").style.display = "block";
+
+                return;
+            }
+        }
+
+        // Έλεγχος αν το password είναι weak (50% αριθμοί ή 50% ίδιοι χαρακτήρες)
+        var numberCount = 0;
+        var charCount = {};
+        for (var i = 0; i < passwordLength; i++) {
+            if (!isNaN(password[i]) && password[i] !== ' ') {
+                numberCount++;
+            }
+
+            var char = password[i];
+            charCount[char] = (charCount[char] || 0) + 1;  // Μετράμε τις εμφανίσεις κάθε χαρακτήρα
+        }
+
+        // Αν το 50% ή περισσότερο του κωδικού είναι αριθμοί ή αν το 50% του κωδικού είναι ο ίδιος χαρακτήρας, το password είναι weak
+        if (numberCount / passwordLength >= 0.5 && passwordLength > 0) {
+            document.getElementById("weakPasswordMessage").style.display = "block";
+
+            return;
+        }
+
+        for (var char in charCount) {
+            if (charCount[char] / passwordLength >= 0.5) {
+                document.getElementById("weakPasswordMessage").style.display = "block"; // Εμφανίζουμε το weak password
+
+                return;
+            }
+        }
+
+        // Έλεγχος για strong password
+        var passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=]).{8,18}$/;
+        if (passwordPattern.test(password)) {
+            document.getElementById("strongPasswordMessage").style.display = "block"; // Εμφανίζουμε το strong password
+
+        } else if (passwordLength > 0) {
+            document.getElementById("mediumPasswordMessage").style.display = "block"; // Εμφανίζουμε το medium password
+
+        }
+    });
+
+    function togglePasswordVisibility(id) {
+        var input = document.getElementById(id);
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+
+
+    function toggleVolunteerFields() {
+        const userType = document.getElementById("type").value;
+        const volunteerFields = document.getElementById("volunteerFields");
+        const termsText = document.getElementById("termsText");
+        const ageError = document.getElementById("ageError");
+
+        if (userType === "volunteer") {
+            volunteerFields.style.display = "block";
+            termsText.textContent = "Δηλώνω υπεύθυνα ότι ανήκω στο ενεργό δυναμικό των εθελοντών πυροσβεστών.";
+        } else {
+            volunteerFields.style.display = "none";
+            termsText.textContent = "Αποδέχομαι τους όρους χρήσης.";
+            ageError.style.display = "none";
+        }
+        validateForm();
+    }
+
+    function validateForm() {
+        const userType = document.getElementById("type").value;
+        const birthdate = document.getElementById("birthdate").value;
+        const ageError = document.getElementById("ageError");
+
+        if (userType === "volunteer" && birthdate) {
+            const birthYear = new Date(birthdate).getFullYear();
+            const currentYear = new Date().getFullYear();
+            const age = currentYear - birthYear;
+
+            if (age < 18 || age > 55) {
+                ageError.style.display = "block";
+                alert("age error");
+                return false;
+            }
+        }
+
+        ageError.style.display = "none";
+        return true;
+    }
+
+    function post_register_user(){
+
+        let myForm = document.getElementById('registrationForm'); // Reference to the form
+
+        let formData = new FormData(myForm); // Create FormData object
+
+        const data = {};
+
+
+        // Convert FormData to JSON object
+        formData.forEach((value, key) => (data[key] = value));
+        data['lat']='35.3401097';
+        data['lon']='25.1562301';
+
+        const jsonData = JSON.stringify(data);
+
+        alert(jsonData);
+        // Create an XMLHttpRequest object
+        const xhr = new XMLHttpRequest();
+
+        // Define what happens when the request is successful
+        xhr.onload = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById('check').innerHTML = "Successful Registration. Now please log in!<br> Your Data";
+
+            } else if (xhr.status === 403){
+                document.getElementById('check').innerHTML = 'Request failed. Username or email or telephone already in use-Status Code ' + xhr.status + "<br>";
+            }
+        };
+
+        // Define the request
+        xhr.open('POST', 'register_user', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        // Send the request
+        xhr.send(jsonData);
+
+    }
+
+    function post_register_volunteer(){
+
+        let myForm = document.getElementById('registrationForm'); // Reference to the form
+
+        let formData = new FormData(myForm); // Create FormData object
+
+        const data = {};
+
+
+        // Convert FormData to JSON object
+        formData.forEach((value, key) => (data[key] = value));
+        data['lat']='35.3401097';
+        data['lon']='25.1562301';
+        data['volunteer_type']=document.getElementById("volunteer_type").value;
+        data['height']=document.getElementById("height").value;
+        data['weight']=document.getElementById('weight').value;
+
+        const jsonData = JSON.stringify(data);
+
+        alert(jsonData);
+        // Create an XMLHttpRequest object
+        const xhr = new XMLHttpRequest();
+
+        // Define what happens when the request is successful
+        xhr.onload = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                document.getElementById('check').innerHTML = "Successful Volunteer Registration. Now please log in!<br> Your Data";
+
+            } else if (xhr.status === 403){
+                document.getElementById('check').innerHTML = 'Request failed. Volunteer Username or email or telephone already in use-Status Code ' + xhr.status + "<br>";
+            }
+        };
+
+        // Define the request
+        xhr.open('POST', 'register_volunteer', true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        // Send the request
+        xhr.send(jsonData);
+
+    }
+
+    function register(){
+        if (document.getElementById("type").value === "volunteer" ){
+            post_register_volunteer();
+            alert("volunteer");
+        }
+        else{
+            post_register_user();
+            alert("user");
+        }
+    }
+
+</script>
+</body>
+</html>

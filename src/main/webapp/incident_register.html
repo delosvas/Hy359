@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Incident</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6B73FF, #000DFF);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            color: #333;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #000DFF;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin: 15px 0 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #000DFF;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #000DFF;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #3333FF;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .back-button {
+            background: #ccc;
+            color: #000;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #aaa;
+            color: #fff;
+        }
+
+        #check {
+            margin-top: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Register New Incident</h1>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="incident_type">Incident Type:</label>
+            <input type="text" id="incident_type" name="incident_type" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="user_phone">User Phone:</label>
+            <input type="tel" id="user_phone" name="user_phone" required>
+        </div>
+        <div class="form-group">
+            <label for="user_type">User Type:</label>
+            <select id="user_type" name="user_type" required>
+                <option value="user">User</option>
+                <option value="volunteer">Volunteer</option>
+                <option value="fireman">Fireman</option>
+                <option value="guest">Guest</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+        </div>
+        <div class="form-group">
+            <label for="prefecture">Prefecture:</label>
+            <input type="text" id="prefecture" name="prefecture">
+        </div>
+        <div class="form-group">
+            <label for="municipality">Municipality:</label>
+            <input type="text" id="municipality" name="municipality">
+        </div>
+        <div class="form-group">
+            <label for="danger">Danger Level:</label>
+            <input type="number" id="danger" name="danger" min="0" max="10" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+                <option value="in_progress">In Progress</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="lat">Latitude:</label>
+            <input type="number" step="any" id="lat" name="lat" required>
+        </div>
+        <div class="form-group">
+            <label for="lon">Longitude:</label>
+            <input type="number" step="any" id="lon" name="lon" required>
+        </div>
+        <div class="form-group">
+            <label for="vehicles">Vehicles:</label>
+            <input type="number" id="vehicles" name="vehicles" min="0" required>
+        </div>
+        <div class="form-group">
+            <label for="firemen">Firemen:</label>
+            <input type="number" id="firemen" name="firemen" min="0" required>
+        </div>
+        <button type="button" onclick="post_register_user()">Register Incident</button>
+        <div id="check"></div>
+        <button type="button" class="back-button" onclick="goBack()">← Go Back</button>
+    </form>
+    <script>
+        function post_register_user() {
+            let myForm = document.getElementById('registrationForm');
+            let formData = new FormData(myForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value));
+            data['lat'] = '35.3401097';
+            data['lon'] = '25.1562301';
+            const jsonData = JSON.stringify(data);
+
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('check').innerHTML = "Successful Registration!";
+                } else if (xhr.status === 406) {
+                    document.getElementById('check').innerHTML = "Invalid Data.";
+                }
+            };
+            xhr.open('POST', 'registerIncidentServlet', true);
+            xhr.setRequestHeader('Content-type', 'application/json');
+            xhr.send(jsonData);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</div>
+</body>
+</html>

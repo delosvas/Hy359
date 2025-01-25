@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .user-details {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .user-details h2 {
+            text-align: center;
+        }
+        .user-details p {
+            margin: 5px 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div id="infoBox">
+        <!-- Table will be dynamically added here -->
+    </div>
+
+        <script>
+            $(document).ready(function () {
+                // Trigger InfoGET when the document is ready
+                InfoGET();
+            });
+
+            function InfoGET() {
+                var xhr = new XMLHttpRequest();
+
+                xhr.onload = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        const responseData = JSON.parse(xhr.responseText);
+                        $('#infoBox').html(createTableFromData(responseData));
+                    } else if (xhr.status !== 200) {
+                        $('#infoBox').text("Couldn't find your Data");
+                    }
+                };
+
+                xhr.open('GET', 'info_user', true); // Replace 'info_user' with your servlet endpoint
+                xhr.send();
+            }
+
+            // Function to create an HTML table from JSON data
+            function createTableFromData(data) {
+                let table = '<table>';
+                table += '<thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
+
+                for (const key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        table += `<tr><td>${key}</td><td>${data[key]}</td></tr>`;
+                    }
+                }
+
+                table += '</tbody></table>';
+                return table;
+            }
+
+        </script>
+        <button onclick="logout()" style="margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Logout
+        </button>
+
+        <script>
+            function logout() {
+                // Redirect to logout servlet
+                window.location.href = "logout_user";
+            }
+        </script>
+
+    </body>
+</html>
